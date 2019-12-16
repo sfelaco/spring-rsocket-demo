@@ -1,9 +1,15 @@
 package com.sfelaco.rsocket.repositories;
 
-import org.springframework.data.r2dbc.repository.R2dbcRepository;
+import java.util.Map;
 
 import com.sfelaco.rsocket.pojos.ZTLAcces;
 
-public interface ZTLAccessRepository extends  R2dbcRepository<ZTLAcces, String> {
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+public interface ZTLAccessRepository {
+
+	Flux<Map<String, Object>> saveAll(Flux<ZTLAcces> fluxAccess);
+	
+	
 }

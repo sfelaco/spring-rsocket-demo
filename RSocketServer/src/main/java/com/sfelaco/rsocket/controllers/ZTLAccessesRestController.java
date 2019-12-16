@@ -1,5 +1,6 @@
 package com.sfelaco.rsocket.controllers;
 
+import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,7 +42,7 @@ public class ZTLAccessesRestController {
 	}
 	
 	@GetMapping("load2")
-	public void load2() {
+	public void load2() throws IOException {
 		log.info("Loading cvs started...");
 		final AtomicInteger i = new AtomicInteger(0);
 		ztlAccessesService.loadAll2().doOnComplete(() -> {log.info("######### COMPLETED ######");})

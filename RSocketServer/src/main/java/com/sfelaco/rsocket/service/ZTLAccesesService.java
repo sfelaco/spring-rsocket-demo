@@ -1,5 +1,6 @@
 package com.sfelaco.rsocket.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -14,12 +15,10 @@ public interface ZTLAccesesService {
 
 	Flux<ZTLAcces> getAccesses(String area);
 
-	Flux<ZTLAcces> addZtlAccesses(List<ZTLAcces> ztlAccesses);
-
-	Mono<ZTLAcces> addZtlAccess(ZTLAcces ztlAccess);
+	Flux<Map<String, Object>> addZtlAccess(ZTLAcces ztlAccess);
 
 	Flux<ZTLAcces> loadAll();
 
-	Flux<Map<String, Object>> loadAll2();
+	Flux<Map<String, Object>> loadAll2() throws IOException;
 
 }

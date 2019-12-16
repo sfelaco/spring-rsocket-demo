@@ -39,9 +39,6 @@ public class ZTLAccessServiceImpl implements ZTLAccesesService {
 	@Autowired
 	private ZTLAccessRepository repo;
 
-	@Autowired
-	private DatabaseClient databaseClient;
-
 	@Override
 	public Mono<Long> getNumAccesses(String area) {
 		log.info("getAccessService");
@@ -58,104 +55,35 @@ public class ZTLAccessServiceImpl implements ZTLAccesesService {
 
 	}
 
-	@Override
-	public Flux<ZTLAcces> addZtlAccesses(List<ZTLAcces> ztlAccesses) {
-		return repo.saveAll(Flux.just(ztlAccesses.toArray(new ZTLAcces[ztlAccesses.size()])));
-	}
 
 	@Override
-	public Mono<ZTLAcces> addZtlAccess(ZTLAcces ztlAccess) {
+	public Flux<Map<String, Object>> addZtlAccess(ZTLAcces ztlAccess) {
 		log.info("ADD ZTL");
-		return repo.save(ztlAccess);
+		return repo.saveAll(Flux.just(ztlAccess));
 	}
-	
-	
-	
-	@Override
-	public Flux<ZTLAcces> loadAll() {
-		try {
-			Resource csvFile = new ClassPathResource("ingressi_areac_2019_10.csv");
-			CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(csvFile.getInputStream())).withSkipLines(1)
-					.build();
 
+	@Override
+	public Flux<Map<String, Object>> loadAll2() throws IOException {
+		Resource csvFile = new ClassPathResource("ingressi_areac_2019_10.csv");
+		CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(csvFile.getInputStream())).withSkipLines(1)
+				.build();
+
+		Flux<ZTLAcces> fluxAccess = Flux.create(emitter -> {
 			String[] nextRecord = null;
-			int c = 0;
-			List<ZTLAcces> emitter = new ArrayList<>();
-			while ((nextRecord = csvReader.readNext()) != null) {
-				emitter.add(toZTLAccess(nextRecord));
-				if (++c == 3000) break;
-			}
-			log.info("Loading accesses");
-			AtomicInteger i = new AtomicInteger();
-			i.set(0);
-			return repo.saveAll(emitter);
-			//hotFluxAccess.subscribe(a-> log.info(a.toString()));
-			//hotFluxAccess.connect();
-
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-		return Flux.empty();
-	}
-	
-	
-//	@Override
-//	public Flux<Map<String, Object>> loadAll2() {
-//		try {
-//			Resource csvFile = new ClassPathResource("ingressi_areac_2019_10.csv");
-//			CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(csvFile.getInputStream())).withSkipLines(1)
-//					.build();
-//
-//			String[] nextRecord = null;
-//			int c = 0;
-//			List<ZTLAcces> emitter = new ArrayList<>();
-//			while ((nextRecord = csvReader.readNext()) != null) {
-//				emitter.add(toZTLAccess(nextRecord));
-//				if (++c == 3000) break;
-//			}
-//			log.info("Loading accesses");
-//			AtomicInteger i = new AtomicInteger();
-//			i.set(0);
-//			return databaseClient.insert().into(ZTLAcces.class).using(Flux.fromStream(emitter.stream())).fetch().all();
-//
-//		} catch (Exception e) {
-//			log.error(e.getMessage(), e);
-//		}
-//		return Flux.empty();
-//	}
-	
-	@Override
-	public Flux<Map<String, Object>> loadAll2() {
-		try {
-			Resource csvFile = new ClassPathResource("ingressi_areac_2019_10.csv");
-			CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(csvFile.getInputStream())).withSkipLines(1)
-					.build();
-			Flux<ZTLAcces> fluxAccess = Flux.create(emitter -> {
-				String[] nextRecord = null;
-	            try {
-					while ((nextRecord = csvReader.readNext()) != null) {
-						emitter.next(toZTLAccess(nextRecord));
-					}
-					emitter.complete();
-				} catch (IOException e) {
-					log.error(e.getMessage(),e);
-					emitter.error(e);
+			try {
+				while ((nextRecord = csvReader.readNext()) != null) {
+					emitter.next(toZTLAccess(nextRecord));
 				}
+				emitter.complete();
+			} catch (IOException e) {
+				log.error(e.getMessage(), e);
+				emitter.error(e);
+			}
 
-			},FluxSink.OverflowStrategy.BUFFER);
-			//ConnectableFlux<ZTLAcces> hotFluxAccess = fluxAccess.publish();
-			return databaseClient.insert().into(ZTLAcces.class).using(fluxAccess).fetch().all();
-//			repo.saveAll(fluxAccess)
-//				.doOnComplete(() -> {log.info("######### COMPLETED ######");}).subscribe(a -> log.info(a.toString()));
-			//hotFluxAccess.subscribe(a-> log.info(a.toString()));
-			//hotFluxAccess.connect();
+		}, FluxSink.OverflowStrategy.BUFFER);
+		return repo.saveAll(fluxAccess);
 
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-		return Flux.empty();
 	}
-	
 
 	private ZTLAcces toZTLAccess(String[] nextRecord) {
 		ZTLAcces access = new ZTLAcces();
