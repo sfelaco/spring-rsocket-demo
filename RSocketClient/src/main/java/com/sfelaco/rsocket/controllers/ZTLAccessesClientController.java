@@ -28,7 +28,7 @@ public class ZTLAccessesClientController {
 	
 	@GetMapping("accesses-stream/{area}")
 	public Publisher<ZTLAccess> getAccessesStream(@PathVariable String area){
-		log.info("######## GET ACCESSES STREAM ########");
+		log.info("Get Ztl accesses stream");
 		return ztlAdapter.getZTLAccessesStream(area).log();
 	}
 	
