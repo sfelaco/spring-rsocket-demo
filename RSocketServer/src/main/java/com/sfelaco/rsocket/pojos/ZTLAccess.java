@@ -17,7 +17,7 @@ import lombok.ToString;
 @ToString
 @Table("ztlaccess")
 
-public class ZTLAcces {
+public class ZTLAccess {
 	
 	@Id
 	private Long id;

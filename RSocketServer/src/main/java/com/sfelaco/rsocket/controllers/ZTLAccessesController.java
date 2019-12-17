@@ -1,13 +1,11 @@
 package com.sfelaco.rsocket.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
 import com.sfelaco.rsocket.pojos.NumAccessesResponse;
-import com.sfelaco.rsocket.pojos.ZTLAcces;
+import com.sfelaco.rsocket.pojos.ZTLAccess;
 import com.sfelaco.rsocket.service.ZTLAccesesService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +26,7 @@ public class ZTLAccessesController {
 	}
 	
 	@MessageMapping("accesses-stream")
-	public Flux<ZTLAcces> getAccessesAsStream(String area){
+	public Flux<ZTLAccess> getAccessesAsStream(String area){
 		log.info("### Get Accesses Stream");
 		return ztlAccessesService.getAccesses(area);
 	}

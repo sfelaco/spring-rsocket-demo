@@ -1,8 +1,5 @@
 package com.sfelaco.rsocket.adapters;
 
-import java.time.Duration;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.stereotype.Component;
@@ -24,14 +21,12 @@ public class ZTLAccessesAdapter {
 	
 	public Mono<NumAccessesResponse> getNumAccesses(String area) {
 		return rSocketRequester.route("accesses-number")
-			.data(area).retrieveMono(NumAccessesResponse.class)
-			.doOnNext(r -> log.info("Retrived a numAccesses response"));
+			.data(area).retrieveMono(NumAccessesResponse.class);
 	}
 	
 	public Flux<ZTLAccess> getZTLAccessesStream(String area){
 		return rSocketRequester.route("accesses-stream")
-				.data(area).retrieveFlux(ZTLAccess.class)/*.delayElements(Duration.ofMillis(2000))*/
-				.doOnNext(z -> log.info(z.getId()));
+				.data(area).retrieveFlux(ZTLAccess.class);
 	}
 	
 
