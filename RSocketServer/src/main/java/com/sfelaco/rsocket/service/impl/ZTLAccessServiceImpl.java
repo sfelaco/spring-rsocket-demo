@@ -5,18 +5,14 @@ import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opencsv.CSVReader;
@@ -26,7 +22,6 @@ import com.sfelaco.rsocket.repositories.ZTLAccessRepository;
 import com.sfelaco.rsocket.service.ZTLAccesesService;
 
 import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
@@ -47,23 +42,22 @@ public class ZTLAccessServiceImpl implements ZTLAccesesService {
 
 	@Override
 	public Flux<ZTLAcces> getAccesses(String area) {
-		/*
-		 * return Flux.range(0, 100).delayElements(Duration.ofMillis(500)) .map(i ->
-		 * getZTLAccessMock()).doOnNext(a -> log.info(a.getId()));
-		 */
 		return repo.findAll();
-
 	}
 
 
 	@Override
 	public Flux<Map<String, Object>> addZtlAccess(ZTLAcces ztlAccess) {
-		log.info("ADD ZTL");
 		return repo.saveAll(Flux.just(ztlAccess));
+	}
+	
+	@Override
+	public Flux<Map<String, Object>> addZtlAccesses(List<ZTLAcces> ztlAccess) {
+		return repo.saveAll(Flux.fromIterable(ztlAccess));
 	}
 
 	@Override
-	public Flux<Map<String, Object>> loadAll2() throws IOException {
+	public Flux<Map<String, Object>> loadDB() throws IOException {
 		Resource csvFile = new ClassPathResource("ingressi_areac_2019_10.csv");
 		CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(csvFile.getInputStream())).withSkipLines(1)
 				.build();
@@ -108,5 +102,6 @@ public class ZTLAccessServiceImpl implements ZTLAccesesService {
 		LocalDateTime aLD = LocalDateTime.parse(date, dTF);
 		return Date.from(aLD.atZone(ZoneId.systemDefault()).toInstant());
 	}
+
 
 }

@@ -35,9 +35,6 @@ public class ZTLAccessesClientController {
 		return ztlAdapter.getZTLAccessesStream(area);
 	}
 	
-	@PostMapping("accesses-add")
-	public Publisher<Void> addAccesses(@RequestBody ZTLAccessRequest ztlRequest){
-		return ztlAdapter.addAccesses(ztlRequest.getZtlAccesses());
-	}
+
 	
 }

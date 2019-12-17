@@ -32,11 +32,6 @@ public class ZTLAccessesController {
 		log.info("### Get Accesses Stream");
 		return ztlAccessesService.getAccesses(area);
 	}
-	
-	@MessageMapping("accesses-add")
-	public Mono<Void> addAccesses(List<ZTLAcces> ztlAccesses){
-		ztlAccessesService.addZtlAccesses(ztlAccesses);
-		return Mono.empty();
-	}
+
  
 }

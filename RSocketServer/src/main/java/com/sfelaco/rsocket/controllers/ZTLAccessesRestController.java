@@ -31,21 +31,11 @@ public class ZTLAccessesRestController {
 	}
 	
 	
-	@GetMapping("load")
-	public void load() {
+	@GetMapping("load-db")
+	public void loadDB() throws IOException {
 		log.info("Loading cvs started...");
 		final AtomicInteger i = new AtomicInteger(0);
-		ztlAccessesService.loadAll().doOnComplete(() -> {log.info("######### COMPLETED ######");})
-			.subscribe(a -> {	
-				log.info("Stored row num: " + i.incrementAndGet());
-			});
-	}
-	
-	@GetMapping("load2")
-	public void load2() throws IOException {
-		log.info("Loading cvs started...");
-		final AtomicInteger i = new AtomicInteger(0);
-		ztlAccessesService.loadAll2().doOnComplete(() -> {log.info("######### COMPLETED ######");})
+		ztlAccessesService.loadDB()
 		.subscribeOn(Schedulers.parallel())
 		.subscribe(a -> {	
 			log.info("Stored row num: " + i.incrementAndGet());

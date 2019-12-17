@@ -34,8 +34,5 @@ public class ZTLAccessesAdapter {
 				.doOnNext(z -> log.info(z.getId()));
 	}
 	
-	public Mono<Void> addAccesses(List<ZTLAccess> accesses) {
-		return rSocketRequester.route("accesses-add").data(accesses).send();
-	}
 
 }

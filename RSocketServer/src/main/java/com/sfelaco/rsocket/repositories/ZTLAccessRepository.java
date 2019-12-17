@@ -10,6 +10,10 @@ import reactor.core.publisher.Mono;
 public interface ZTLAccessRepository {
 
 	Flux<Map<String, Object>> saveAll(Flux<ZTLAcces> fluxAccess);
+
+	Flux<ZTLAcces> findAll();
+
+	Mono<Long> count();
 	
 	
 }

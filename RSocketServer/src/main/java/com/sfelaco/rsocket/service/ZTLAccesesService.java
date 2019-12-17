@@ -17,8 +17,8 @@ public interface ZTLAccesesService {
 
 	Flux<Map<String, Object>> addZtlAccess(ZTLAcces ztlAccess);
 
-	Flux<ZTLAcces> loadAll();
+	Flux<Map<String, Object>> loadDB() throws IOException;
 
-	Flux<Map<String, Object>> loadAll2() throws IOException;
+	Flux<Map<String, Object>> addZtlAccesses(List<ZTLAcces> ztlAccess);
 
 }
