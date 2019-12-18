@@ -1,8 +1,11 @@
 package com.sfelaco.rsocket.controllers;
 
 
+import java.time.Duration;
+
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,9 +30,12 @@ public class ZTLAccessesClientController {
 	}
 	
 	@GetMapping("accesses-stream/{area}")
-	public Publisher<ZTLAccess> getAccessesStream(@PathVariable String area){
+	public Publisher<ServerSentEvent<ZTLAccess>> getAccessesStream(@PathVariable String area){
 		log.info("Get Ztl accesses stream");
-		return ztlAdapter.getZTLAccessesStream(area).log();
+		return ztlAdapter.getZTLAccessesStream(area).log().map(a -> 
+			ServerSentEvent.<ZTLAccess> builder()
+				.id(String.valueOf(a.getId()))
+				.event("ztl-access").data(a).build()).delayElements(Duration.ofSeconds(2));
 	}
 	
 	
